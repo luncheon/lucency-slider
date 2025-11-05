@@ -1,0 +1,12 @@
+{
+  "name": "lucency-slider",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A tiny web component for inputting translucency/opacity.",
+  "license": "WTFPL",
+  "repository": "luncheon/lucency-slider",
+  "type": "module",
+  "main": "lucency-slider.js",
+  "types": "lucency-slider.d.ts",
+  "files": ["lucency-slider.css", "lucency-slider.d.ts"]
+}

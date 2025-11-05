@@ -1,0 +1,53 @@
+lucency-slider {
+  --checker-pattern: repeating-conic-gradient(var(--checker-color-2, #fff) 0 25%, var(--checker-color-1, #ddd) 0 50%) 0 0/.5lh .5Lh;
+  --opaque-color: rgb(from currentColor r g b / attr(max %, 1));
+  --lucent-color: rgb(from currentColor r g b / attr(min %, 0));
+
+  user-select: none;
+  box-sizing: border-box;
+  position: relative;
+  display: inline-block;
+  inline-size: 100%;
+  block-size: 1lh;
+  cursor: ew-resize;
+  background: linear-gradient(to left, var(--opaque-color), var(--lucent-color)), var(--checker-pattern);
+
+  &::part(range) {
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: inherit;
+  }
+
+  &::part(thumb) {
+    box-sizing: border-box;
+    position: absolute;
+    inset: 1px auto 1px attr(data-x px);
+    inline-size: 4px;
+    border-radius: 9px;
+    border: 1px solid #fff;
+    box-shadow: 0 0 0 1px #333;
+  }
+
+  &:where(:hover:not(:active):not([disabled]))::part(thumb) {
+    border-color: #ddd;
+  }
+
+  &[vertical] {
+    writing-mode: vertical-lr;
+    cursor: ns-resize;
+    background: linear-gradient(to top, var(--opaque-color), var(--lucent-color)), var(--checker-pattern);
+    &::part(thumb) {
+      inset: attr(data-y px) 1px auto 1px;
+    }
+  }
+
+  &[disabled] {
+    cursor: auto;
+    &::part(thumb) {
+      box-shadow: 0 0 0 1px #888;
+    }
+  }
+}
