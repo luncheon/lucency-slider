@@ -1,6 +1,6 @@
 {
   "name": "lucency-slider",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A tiny web component for inputting translucency/opacity.",
   "license": "WTFPL",
   "repository": {
@@ -13,5 +13,16 @@
   "files": [
     "lucency-slider.css",
     "lucency-slider.d.ts"
+  ],
+  "keywords": [
+    "webcomponent",
+    "webcomponents",
+    "opacity",
+    "slider",
+    "opacity-slider",
+    "alpha",
+    "color",
+    "picker",
+    "color-picker"
   ]
 }
