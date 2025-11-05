@@ -1,7 +1,10 @@
 lucency-slider {
-  --checker-pattern: repeating-conic-gradient(var(--checker-color-2, #fff) 0 25%, var(--checker-color-1, #ddd) 0 50%) 0 0/.5lh .5Lh;
-  --opaque-color: rgb(from currentColor r g b / attr(max %, 1));
-  --lucent-color: rgb(from currentColor r g b / attr(min %, 0));
+  --dir: right;
+  --min: attr(min type(<number>), 0);
+  --max: attr(max type(<number>), 100);
+  --min\%: attr(min %, 0);
+  --max\%: attr(max %, 1);
+  --value: attr(value type(<number>));
 
   user-select: none;
   box-sizing: border-box;
@@ -10,7 +13,9 @@ lucency-slider {
   inline-size: 100%;
   block-size: 1lh;
   cursor: ew-resize;
-  background: linear-gradient(to left, var(--opaque-color), var(--lucent-color)), var(--checker-pattern);
+  background:
+    linear-gradient(to var(--dir), rgb(from currentColor r g b / var(--min\%)), rgb(from currentColor r g b / var(--max\%))),
+    repeating-conic-gradient(var(--checker-color-2, #fff) 0 25%, var(--checker-color-1, #ddd) 0 50%) 0 0/.5lh .5Lh;
 
   &::part(range) {
     box-sizing: border-box;
@@ -22,9 +27,11 @@ lucency-slider {
   }
 
   &::part(thumb) {
+    --inline-size: attr(inline-size px);
     box-sizing: border-box;
     position: absolute;
-    inset: 1px auto 1px attr(data-x px);
+    inset-block: 1px;
+    inset-inline-start: calc((100% - var(--inline-size)) * (var(--value) - var(--min)) / (var(--max) - var(--min)));
     inline-size: 4px;
     border-radius: 9px;
     border: 1px solid #fff;
@@ -36,12 +43,9 @@ lucency-slider {
   }
 
   &[vertical] {
+    --dir: bottom;
     writing-mode: vertical-lr;
     cursor: ns-resize;
-    background: linear-gradient(to top, var(--opaque-color), var(--lucent-color)), var(--checker-pattern);
-    &::part(thumb) {
-      inset: attr(data-y px) 1px auto 1px;
-    }
   }
 
   &[disabled] {

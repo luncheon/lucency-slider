@@ -2,18 +2,17 @@ const clamp_0_100 = v => v < 0 ? 0 : v > 100 ? 100 : v;
 
 export default class LucencySlider extends HTMLElement {
   static formAssociated = true;
-  static observedAttributes = ["disabled", "max", "min", "name", "step", "value", "vertical"];
+  static observedAttributes = ["disabled", "max", "min", "step", "value"];
 
   #range;
   #internals = this.attachInternals();
+
   constructor() {
     super();
     this.#internals.role = "slider";
     this.attachShadow({ clonable: true, delegatesFocus: true, mode: "open" }).innerHTML =
       "<div part=thumb></div><input part=range type=range>";
     this.#range = this.shadowRoot.lastElementChild;
-    this.#range.addEventListener("input", this.#sync);
-    this.#range.addEventListener("change", e => this.dispatchEvent(new Event(e.type, e)));
   }
 
   get disabled() { return this.#range.disabled; }
@@ -46,23 +45,30 @@ export default class LucencySlider extends HTMLElement {
 
   connectedCallback() {
     const range = this.#range;
+    const thumb = this.shadowRoot.firstElementChild;
     range.disabled = this.hasAttribute("disabled");
     range.max = this.getAttribute("max") || 100;
     range.min = this.getAttribute("min") || 0;
     range.step = this.getAttribute("step") || 1;
     range.value = this.getAttribute("value") || this.max;
+    thumb.setAttribute("inline-size", this.vertical ? thumb.offsetHeight : thumb.offsetWidth); // ResizeObserver seems overkill
+    this.#range.addEventListener("input", this.#sync);
+    this.#range.addEventListener("change", this.#redispatch);
     this.#sync();
+  }
+
+  disconnectedCallback() {
+    this.#range.removeEventListener("input", this.#sync);
+    this.#range.removeEventListener("change", this.#redispatch);
   }
 
   #sync = () => {
     this.setAttribute("value", this.value);
     this.#internals.setFormValue(this.valueAsNumber);
     this.#internals.setValidity(this.#range.validity, this.#range.validationMessage);
-    const thumb = this.shadowRoot.firstElementChild;
-    const value = (this.valueAsNumber - this.min) / (this.max - this.min)
-    thumb.dataset.x = value * (this.offsetWidth - thumb.offsetWidth);
-    thumb.dataset.y = value * (this.offsetHeight - thumb.offsetHeight);
   }
+
+  #redispatch = event => this.dispatchEvent(new event.constructor(event.type, event));
 }
 
 customElements.define("lucency-slider", LucencySlider);
