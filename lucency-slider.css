@@ -16,6 +16,8 @@ lucency-slider {
   background:
     linear-gradient(to var(--dir), rgb(from currentColor r g b / var(--min\%)), rgb(from currentColor r g b / var(--max\%))),
     repeating-conic-gradient(var(--checker-color-2, #fff) 0 25%, var(--checker-color-1, #ddd) 0 50%) 0 0/.5lh .5Lh;
+  /* chromium bug workaround: currentColor in background is not reactive; using currentColor in border makes background reactive. */
+  border: 0 solid currentColor;
 
   &::part(range) {
     box-sizing: border-box;
