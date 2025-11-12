@@ -2,21 +2,19 @@
 <html>
 <head>
   <title>&lt;lucency-slider&gt;</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucency-slider/lucency-slider.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucency-slider@0.1.3/lucency-slider.css">
   <script type="module">
-    import LucencySlider from "https://cdn.jsdelivr.net/npm/lucency-slider/lucency-slider.min.js";
+    import LucencySlider from "https://cdn.jsdelivr.net/npm/lucency-slider@0.1.3/lucency-slider.min.js";
     window.LucencySlider = LucencySlider;
 
     addEventListener('load', () => {
       window.lucencySlider = document.querySelector('lucency-slider');
-      document.body.style.background = `rgb(from rebeccapurple r g b / ${lucencySlider.valueAsNumber}%)`;
       const output = document.querySelector("[name=value]");
       output.value = lucencySlider.value;
 
       lucencySlider.addEventListener("input", event => {
         console.debug(event, event.target.valueAsNumber);
         output.value = event.target.value;
-        document.body.style.background = `rgb(from rebeccapurple r g b / ${event.target.valueAsNumber}%)`;
         document.body.style.color = lucencySlider.valueAsNumber < 65 ? "#000" : "#fff";
       });
 
@@ -26,12 +24,18 @@
     });
   </script>
   <style>
+    body {
+      --base-color: rebeccapurple;
+      --opacity: 20%;
+      background: rgb(from var(--base-color) r g b / var(--opacity));
+    }
     lucency-slider {
       inline-size: 200px;
+      color: var(--base-color);
     }
     label {
       display: grid;
-      grid-template-columns: 8ex 6ex;
+      grid-template-columns: 10ex 6ex;
       align-items: center;
       column-gap: 8px;
       text-align: right;
@@ -59,7 +63,7 @@
 
   <form style="display: flex; gap: 20px; align-items: flex-start;" onsubmit="event.preventDefault()">
     <div style="width: 200px">
-      <lucency-slider value="20" style="color: rebeccapurple;"></lucency-slider>
+      <lucency-slider value="20" oninput="document.body.style.setProperty('--opacity',event.target.value+'%')"></lucency-slider>
     </div>
     <fieldset style="display: flex; flex-direction: column;">
       <label>value<input type="number" name="value" readonly></label>
@@ -68,6 +72,7 @@
       <label>step<input type="number" min="0" max="100" step="any" value="1" onchange="lucencySlider.step=event.target.valueAsNumber"></label>
       <label>disabled<input type="checkbox" onclick="lucencySlider.disabled=event.target.checked"></label>
       <label>vertical<input type="checkbox" onclick="lucencySlider.vertical=event.target.checked"></label>
+      <label>style.color<input type="color" name="color" value="#663399" oninput="document.body.style.setProperty('--base-color',event.target.value)"></label>
     </fieldset>
   </form>
 
