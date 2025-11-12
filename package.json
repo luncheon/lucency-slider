@@ -1,6 +1,6 @@
 {
   "name": "lucency-slider",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A tiny web component for inputting translucency/opacity.",
   "license": "WTFPL",
   "repository": {
