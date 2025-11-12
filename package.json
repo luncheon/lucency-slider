@@ -10,6 +10,7 @@
   "type": "module",
   "main": "lucency-slider.js",
   "types": "lucency-slider.d.ts",
+  "style": "lucency-slider.css",
   "files": [
     "lucency-slider.css",
     "lucency-slider.d.ts"
