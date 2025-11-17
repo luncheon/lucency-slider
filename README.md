@@ -2,9 +2,10 @@
 
 A tiny web component for inputting translucency/opacity.
 
-Demo: https://luncheon.github.io/lucency-slider/
-
 [<img alt="image" height="20px" src="https://luncheon.github.io/lucency-slider/image.png">](https://luncheon.github.io/lucency-slider/)
+
+- Demo: https://luncheon.github.io/lucency-slider/
+- Playgroud: https://codepen.io/luncheon/pen/qEZbeMZ?layout=left
 
 ## Usage
 
