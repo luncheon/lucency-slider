@@ -1,4 +1,5 @@
 const clamp_0_100 = v => v < 0 ? 0 : v > 100 ? 100 : v;
+const inlineStyle = CSS.supports("x", "attr(x %)") ? null : (el, prop, value) => el.style.setProperty(prop, value);
 
 export default class LucencySlider extends HTMLElement {
   static formAssociated = true;
@@ -19,10 +20,10 @@ export default class LucencySlider extends HTMLElement {
   set disabled(v) { this.toggleAttribute("disabled", this.#range.disabled = !!v || v === ""); }
 
   get max() { return this.#range.max; }
-  set max(v) { this.setAttribute("max", this.#range.max = clamp_0_100(v)); this.#sync(); }
+  set max(v) { this.#limit("max", v); this.#sync(); }
   
   get min() { return this.#range.min; }
-  set min(v) { this.setAttribute("min", this.#range.min = clamp_0_100(v)); this.#sync(); }
+  set min(v) { this.#limit("min", v); this.#sync(); }
 
   get name() { return this.getAttribute("name"); }
   set name(v) { this.setAttribute("name", v); }
@@ -39,6 +40,12 @@ export default class LucencySlider extends HTMLElement {
   get vertical() { return this.hasAttribute("vertical"); }
   set vertical(v) { this.toggleAttribute("vertical", !!v || v === ""); }
 
+  #limit(minOrMax, v) {
+    this.setAttribute(minOrMax, this.#range[minOrMax] = v = clamp_0_100(v));
+    inlineStyle?.(this, "--" + minOrMax, v);
+    inlineStyle?.(this, `--${minOrMax}%`, v + "%");
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     oldValue !== newValue && (this[name] = newValue);
   }
@@ -46,15 +53,14 @@ export default class LucencySlider extends HTMLElement {
   connectedCallback() {
     const range = this.#range;
     const thumb = this.shadowRoot.firstElementChild;
+    range.addEventListener("input", this.#sync);
+    range.addEventListener("change", this.#redispatch);
     range.disabled = this.hasAttribute("disabled");
-    range.max = this.getAttribute("max") || 100;
-    range.min = this.getAttribute("min") || 0;
     range.step = this.getAttribute("step") || 1;
     range.value = this.getAttribute("value") || this.max;
-    thumb.setAttribute("inline-size", this.vertical ? thumb.offsetHeight : thumb.offsetWidth); // ResizeObserver seems overkill
-    this.#range.addEventListener("input", this.#sync);
-    this.#range.addEventListener("change", this.#redispatch);
-    this.#sync();
+    this.setAttribute("thumb-thick", this.vertical ? thumb.offsetHeight : thumb.offsetWidth); // ResizeObserver seems overkill
+    this.#limit("max", this.getAttribute("max") || 100);
+    this.min = this.getAttribute("min") || 0; // #sync()
   }
 
   disconnectedCallback() {
@@ -66,6 +72,8 @@ export default class LucencySlider extends HTMLElement {
     this.setAttribute("value", this.value);
     this.#internals.setFormValue(this.valueAsNumber);
     this.#internals.setValidity(this.#range.validity, this.#range.validationMessage);
+    const thumb = this.shadowRoot.firstElementChild;
+    inlineStyle?.(this, "--thumb-offset", (this.vertical ? this.offsetHeight - thumb.offsetHeight : this.offsetWidth - thumb.offsetWidth) * (this.valueAsNumber - this.min) / (this.max - this.min) + "px");
   }
 
   #redispatch = event => this.dispatchEvent(new event.constructor(event.type, event));

@@ -5,6 +5,7 @@ lucency-slider {
   --min\%: attr(min %, 0);
   --max\%: attr(max %, 1);
   --value: attr(value type(<number>));
+  --thumb-offset: calc((100% - attr(thumb-thick px)) * (var(--value) - var(--min)) / (var(--max) - var(--min)));
 
   user-select: none;
   box-sizing: border-box;
@@ -29,11 +30,10 @@ lucency-slider {
   }
 
   &::part(thumb) {
-    --inline-size: attr(inline-size px);
     box-sizing: border-box;
     position: absolute;
     inset-block: 1px;
-    inset-inline-start: calc((100% - var(--inline-size)) * (var(--value) - var(--min)) / (var(--max) - var(--min)));
+    inset-inline-start: var(--thumb-offset);
     inline-size: 4px;
     border-radius: 9px;
     border: 1px solid #fff;
